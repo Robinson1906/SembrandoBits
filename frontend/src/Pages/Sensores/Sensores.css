@@ -1,0 +1,320 @@
+/* Sensores.css */
+.contenedor {
+  padding: 20px;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  min-height: 140vh;
+  background: #121212;
+}
+
+.titulo {
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-size: 24px;
+  color: #4fc3f7;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Formularios */
+.formulario,
+.panel-edicion {
+  background: #1e1e2f;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.formulario input,
+.formulario select,
+.panel-edicion input,
+.panel-edicion select {
+  margin: 8px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #333;
+  background: #2a2a3d;
+  color: #fff;
+  font-size: 14px;
+  width: 200px;
+}
+
+.formulario select,
+.panel-edicion select {
+  min-width: 120px;
+}
+
+.formulario h4,
+.panel-edicion h4 {
+  color: #4fc3f7;
+  margin: 15px 0 10px 0;
+}
+
+.formulario .btn-guardar,
+.btn-agregar-campo,
+.panel-edicion .btn-guardar,
+.panel-edicion .btn-agregar-campo {
+  margin-top: 15px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-guardar,
+.panel-edicion .btn-guardar {
+  background: #4caf50;
+}
+
+.btn-guardar:hover,
+.panel-edicion .btn-guardar:hover {
+  background: #388e3c;
+  transform: translateY(-2px);
+}
+
+.btn-agregar-campo,
+.panel-edicion .btn-agregar-campo {
+  background: #2196f3;
+  margin-left: 10px;
+}
+
+.btn-agregar-campo:hover,
+.panel-edicion .btn-agregar-campo:hover {
+  background: #1976d2;
+  transform: translateY(-2px);
+}
+
+/* ==== Tablas unificadas ==== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #1e1e2f;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+  color: #fff;
+}
+
+table th {
+  background: #2a2a3d;
+  color: #4fc3f7;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+table tr:hover {
+  background: #2c2c44;
+}
+
+/* Estados de sensor */
+.activo {
+  color: #4caf50 !important;
+  font-weight: bold;
+}
+
+.inactivo {
+  color: #f44336 !important;
+  font-weight: bold;
+}
+
+/* Botones */
+.btn-editar,
+.btn-apagar,
+.btn-encender,
+.btn-eliminar-definitivo,
+.btn-cancelar,
+.btn-eliminar-campo {
+  padding: 8px 15px;
+  margin: 4px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-editar {
+  background: #2196f3;
+  color: white;
+}
+
+.btn-editar:hover {
+  background: #1976d2;
+  transform: translateY(-2px);
+}
+
+.btn-apagar {
+  background: #ff9800;
+  color: white;
+}
+
+.btn-apagar:hover {
+  background: #f57c00;
+  transform: translateY(-2px);
+}
+
+.btn-encender {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-encender:hover {
+  background: #388e3c;
+  transform: translateY(-2px);
+}
+
+.btn-eliminar-definitivo {
+  background: #d32f2f;
+  color: white;
+}
+
+.btn-eliminar-definitivo:hover {
+  background: #b71c1c;
+  transform: translateY(-2px);
+}
+
+.btn-eliminar-campo {
+  background: #f44336;
+  color: white;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.btn-eliminar-campo:hover {
+  background: #c62828;
+}
+
+.btn-cancelar {
+  background: #757575;
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background: #555;
+  transform: translateY(-2px);
+}
+
+/* Panel edición */
+.panel-edicion {
+  margin-top: 30px;
+  padding: 25px;
+  background: #2a2a3d;
+  border-radius: 10px;
+  border: 2px solid #4fc3f7;
+}
+
+.panel-edicion h3 {
+  color: #4fc3f7;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Grupo de campos en formularios */
+.campo-grupo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.campo-grupo input,
+.campo-grupo select {
+  flex: 1;
+  min-width: 150px;
+  margin: 0;
+}
+
+/* Ajustes para los botones en la tabla de acciones */
+table td:last-child {
+  white-space: nowrap;
+}
+
+/* Mejora visual para los botones en la tabla */
+table .btn-editar,
+table .btn-apagar,
+table .btn-encender,
+table .btn-eliminar-definitivo {
+  margin: 4px;
+  padding: 6px 12px;
+  font-size: 11px;
+}
+
+/* Efecto hover para todos los botones */
+button:hover {
+  opacity: 0.9;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
+  background: #121212;
+}
+
+/* Listas */
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+ul li {
+  padding: 2px 0;
+  font-size: 12px;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+  .contenedor {
+    padding: 10px;
+  }
+  
+  table {
+    font-size: 12px;
+  }
+  
+  .btn-editar,
+  .btn-apagar,
+  .btn-encender,
+  .btn-eliminar-definitivo {
+    padding: 6px 10px;
+    font-size: 10px;
+    margin: 2px;
+  }
+  
+  .campo-grupo {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .campo-grupo input,
+  .campo-grupo select {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  
+  .formulario input,
+  .formulario select,
+  .panel-edicion input,
+  .panel-edicion select {
+    width: 100%;
+    margin: 5px 0;
+  }
+}

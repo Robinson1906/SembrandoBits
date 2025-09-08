@@ -1,0 +1,75 @@
+/* ====== Contenedor principal ====== */
+.sensor-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;       /* centra horizontal */
+  justify-content: center;   /* centra vertical */
+  padding: 24px;
+
+  /* altura dinámica: todo el alto - navbar - footer */
+  min-height: calc(100vh - (1000000px + 14px));  
+  /* 60px = navbar, 40px = footer (ajusta a tus tamaños reales) */
+
+  background: #f9fafb;
+  box-sizing: border-box;
+}
+/* ====== Título ====== */
+.sensor-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #1e40af; /* azul oscuro */
+}
+
+/* ====== Mensajes ====== */
+.loading-text,
+.no-data {
+  color: #374151; /* gris */
+  text-align: center;
+  font-size: 1rem;
+  margin-top: 20px;
+}
+
+/* ====== Contenedor de la tabla ====== */
+.table-wrapper {
+  width: 100%;
+  max-width: 800px; /* limita el ancho */
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+/* ====== Estilos de la tabla ====== */
+.sensor-table {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d1d5db; /* gris claro */
+  border-radius: 12px;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.sensor-table th {
+  background: #2563eb; /* azul */
+  color: #ffffff;
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #d1d5db;
+}
+
+.sensor-table td {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  color: #1f2937; /* gris oscuro */
+  text-align: center;
+}
+
+.sensor-table tr:nth-child(even) {
+  background: #f9fafb; /* gris muy claro */
+}
+
+.sensor-table tr:hover {
+  background: #f3f4f6; /* hover gris */
+}

@@ -1,0 +1,27 @@
+/* Contenedor principal */
+.servicios-container {
+  display: flex;
+  grid-template-columns: 1fr 1fr; /* dos columnas */
+  gap: 2rem;
+  min-height: 70vh;
+  padding: 2rem;
+}
+
+/* Bloque de texto */
+.servicios-content {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Bloque para imagen o extra */
+.servicios-aside {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.servicios-aside img {
+  width: 100%;
+  max-width: 200px;
+  border-radius: 12px;
+}
