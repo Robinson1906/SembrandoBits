@@ -1,11 +1,6 @@
 from flask import Flask, request, jsonify
-import psycopg2
+import mysql.connector
 from flask_cors import CORS
-import os
-from dotenv import load_dotenv
-import socket
-
-load_dotenv(dotenv_path='../.env')
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -13,15 +8,18 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 # ===========================
 # Configuración MySQL
 # ===========================
-DATABASE_URL = os.getenv("DATABASE_URL")
-if DATABASE_URL:
-    DATABASE_URL = DATABASE_URL.strip()
+db_config = {
+    "host": "localhost",
+    "user": "root",
+    "password": "qwerty",
+    "database": "iotdb"
+}
 
 # ===========================
 # Helpers
 # ===========================
 def get_db_connection():
-    return psycopg2.connect(DATABASE_URL)
+    return mysql.connector.connect(**db_config)
 
 def log_error(e, contexto=""):
     print(f"❌ ERROR {contexto}: {e}")
@@ -62,9 +60,9 @@ def agregar_sensor():
                            (tipo_sensor, activo, sensor_id))
             mensaje = f"Sensor '{sensor}' actualizado"
         else:
-            cursor.execute("INSERT INTO sensores_registrados (nombre, tipo, activo) VALUES (%s, %s, %s) RETURNING id",
+            cursor.execute("INSERT INTO sensores_registrados (nombre, tipo, activo) VALUES (%s, %s, %s)",
                            (sensor, tipo_sensor, activo))
-            sensor_id = cursor.fetchone()[0]
+            sensor_id = cursor.lastrowid
             mensaje = f"Sensor '{sensor}' agregado correctamente"
 
         # Insertar/actualizar campos
@@ -297,18 +295,4 @@ def obtener_medidas():
 # INICIO DEL SERVIDOR
 # ===========================
 if __name__ == "__main__":
-    # Debug: Verificar conexión a internet
-    try:
-        socket.create_connection(("8.8.8.8", 53), timeout=3)
-        print("✅ Conexión a internet verificada.")
-    except OSError:
-        print("❌ No se pudo verificar la conexión a internet.")
-
-    try:
-        conn = get_db_connection()
-        conn.close()
-        print("✅ Conexión a la base de datos exitosa.")
-    except Exception as e:
-        print(f"❌ Error al conectar a la base de datos: {e}")
-        
     app.run(host="0.0.0.0", port=5000, debug=True)
