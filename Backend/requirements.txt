@@ -1,3 +1,5 @@
 Flask
 Flask-Cors
-mysql-connector-python
+pymongo[srv]
+python-dotenv
+certifi
