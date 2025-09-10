@@ -103,6 +103,6 @@ def test_db():
 # --- INICIO DEL SERVIDOR ---
 if __name__ == "__main__":
     if client is not None:  # CORRECCIÓN: Usar 'is not None'
-        app.run(host="0.0.0.0", port=5000, debug=True)
+        app.run(host="0.0.0.0", port=8860, debug=True)
     else:
         print("El servidor no se puede iniciar debido a un error de conexión con la base de datos.")

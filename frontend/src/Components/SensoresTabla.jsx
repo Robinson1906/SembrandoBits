@@ -4,7 +4,7 @@ function SensorTable() {
   const [datos, setDatos] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/sensores_db")
+    fetch("http://200.91.211.22:8860/sensores_db")
       .then((res) => res.json())
       .then((data) => setDatos(data))
       .catch((err) => console.error("Error cargando datos:", err));

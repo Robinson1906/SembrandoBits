@@ -15,7 +15,7 @@ function Sensores() {
   const [error, setError] = useState("");
 
   const opcionesTipoCampo = ["float", "number", "int", "boolean", "string"];
-  const API_BASE_URL = "http://localhost:5000";
+  const API_BASE_URL = "http://200.91.211.22:8860/";
 
   const cargarSensores = async () => {
     try {
@@ -89,7 +89,7 @@ function Sensores() {
   const agregarSensor = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/agregar_sensor`, {
+  const res = await fetch(`${API_BASE_URL}/agregar_sensor`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevo),
@@ -121,7 +121,7 @@ function Sensores() {
   const guardarEdicion = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/editar_sensor/${editando.sensor_id}`, {
+  const res = await fetch(`${API_BASE_URL}/editar_sensor/${editando.sensor_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editando),
@@ -152,7 +152,7 @@ function Sensores() {
     if (!window.confirm(`¿Seguro que deseas ${accion} el sensor "${sensor_nombre}"?`)) return;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/editar_sensor/${sensor_id}`, {
+  const res = await fetch(`${API_BASE_URL}/editar_sensor/${sensor_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ activo: nuevoEstado }),
@@ -177,7 +177,7 @@ function Sensores() {
     if (!window.confirm(`¿ESTÁS SEGURO? Esta acción eliminará permanentemente el sensor "${sensor_nombre}" y todas sus medidas. ¡Esta acción no se puede deshacer!`)) return;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/eliminar_sensor_definitivo/${sensor_id}`, {
+  const res = await fetch(`${API_BASE_URL}/eliminar_sensor_definitivo/${sensor_id}`, {
         method: "DELETE",
       });
 
