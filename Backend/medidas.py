@@ -13,7 +13,7 @@ sensores_collection = get_sensores_collection()
 
 @medidas_bp.route('/guardar', methods=['POST'])
 def guardar_medidas():
-    if not medidas_collection:
+    if medidas_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
         data = request.get_json()
@@ -53,7 +53,7 @@ def guardar_medidas():
 
 @medidas_bp.route('/medidas', methods=['GET'])
 def obtener_medidas():
-    if not medidas_collection:
+    if medidas_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
         limite = int(request.args.get('limite', 100))
@@ -93,8 +93,7 @@ def obtener_medidas():
             },
             {
                 "$project": {
-                    "_id": 0,
-                    "id": "$_id",
+                    "_id": {"$toString": "$_id"},  # Convertir ObjectId a string
                     "sensor": "$sensor_info.nombre",
                     "nombre_campo": "$sensor_info.campos.nombre_campo",
                     "valor": "$valor",
@@ -103,6 +102,12 @@ def obtener_medidas():
             }
         ]
         medidas = list(medidas_collection.aggregate(pipeline))
+        
+        # Convertir timestamp a formato ISO para JSON
+        for medida in medidas:
+            if 'timestamp' in medida and medida['timestamp']:
+                medida['timestamp'] = medida['timestamp'].isoformat()
+        
         return jsonify(medidas)
     except Exception as e:
         log_error(e, "obtener_medidas")
@@ -111,17 +116,23 @@ def obtener_medidas():
 @medidas_bp.route('/estado', methods=['GET'])
 def estado_sistema():
     try:
-        total_sensores = sensores_collection.count_documents({}) if sensores_collection else 0
-        total_medidas = medidas_collection.count_documents({}) if medidas_collection else 0
+        total_sensores = sensores_collection.count_documents({}) if sensores_collection is not None else 0
+        total_medidas = medidas_collection.count_documents({}) if medidas_collection is not None else 0
         ultima_medida = medidas_collection.find_one(
             {}, 
             {"sort": [("timestamp", -1)], "projection": {"timestamp": 1}}
-        ) if medidas_collection else None
+        ) if medidas_collection is not None else None
+        
+        # Convertir timestamp si existe
+        ultima_medida_timestamp = None
+        if ultima_medida and 'timestamp' in ultima_medida:
+            ultima_medida_timestamp = ultima_medida['timestamp'].isoformat()
+        
         return jsonify({
-            "estado": "conectado" if medidas_collection else "desconectado",
+            "estado": "conectado" if medidas_collection is not None else "desconectado",
             "total_sensores": total_sensores,
             "total_medidas": total_medidas,
-            "ultima_medida": ultima_medida["timestamp"] if ultima_medida else None
+            "ultima_medida": ultima_medida_timestamp
         })
     except Exception as e:
         log_error(e, "estado_sistema")

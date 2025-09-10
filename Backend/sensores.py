@@ -11,9 +11,43 @@ sensores_bp = Blueprint('sensores', __name__)
 sensores_collection = get_sensores_collection()
 medidas_collection = get_medidas_collection()
 
+def convertir_sensor_a_json(sensor):
+    """Convierte un documento de sensor de MongoDB a JSON serializable"""
+    if not sensor:
+        return None
+        
+    sensor_convertido = {
+        "sensor_id": str(sensor['_id']),
+        "sensor": sensor.get('nombre', ''),
+        "tipo_sensor": sensor.get('tipo', ''),
+        "activo": sensor.get('activo', False),
+        "created_at": sensor.get('created_at'),
+        "updated_at": sensor.get('updated_at'),
+        "campos": []
+    }
+    
+    # Convertir campos si existen
+    if 'campos' in sensor:
+        for campo in sensor['campos']:
+            campo_convertido = {
+                "campo_id": str(campo['_id']),
+                "nombre_campo": campo.get('nombre_campo', ''),
+                "tipo_campo": campo.get('tipo_campo', ''),
+                "activo": campo.get('activo', True)
+            }
+            sensor_convertido['campos'].append(campo_convertido)
+    
+    # Convertir fechas a string si existen
+    if sensor_convertido['created_at']:
+        sensor_convertido['created_at'] = sensor_convertido['created_at'].isoformat()
+    if sensor_convertido['updated_at']:
+        sensor_convertido['updated_at'] = sensor_convertido['updated_at'].isoformat()
+    
+    return sensor_convertido
+
 @sensores_bp.route('/agregar_sensor', methods=['POST'])
 def agregar_sensor():
-    if not sensores_collection:
+    if sensores_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
         data = request.get_json()
@@ -79,7 +113,11 @@ def agregar_sensor():
             sensor_id = result.inserted_id
             mensaje = f"Sensor '{sensor_nombre}' agregado correctamente"
 
-        return jsonify({"status": "ok", "mensaje": mensaje, "sensor_id": str(sensor_id)})
+        return jsonify({
+            "status": "ok", 
+            "mensaje": mensaje, 
+            "sensor_id": str(sensor_id)
+        })
 
     except Exception as e:
         log_error(e, "agregar_sensor")
@@ -87,7 +125,7 @@ def agregar_sensor():
 
 @sensores_bp.route('/editar_sensor/<string:sensor_id>', methods=['PUT'])
 def editar_sensor(sensor_id):
-    if not sensores_collection:
+    if sensores_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
         data = request.get_json()
@@ -149,11 +187,12 @@ def editar_sensor(sensor_id):
 
 @sensores_bp.route('/eliminar_sensor_definitivo/<string:sensor_id>', methods=['DELETE'])
 def eliminar_sensor_definitivo(sensor_id):
-    if not sensores_collection:
+    if sensores_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
         obj_id = ObjectId(sensor_id)
-        medidas_collection.delete_many({"sensor_id": obj_id})
+        if medidas_collection is not None:
+            medidas_collection.delete_many({"sensor_id": obj_id})
         result = sensores_collection.delete_one({"_id": obj_id})
         if result.deleted_count == 0:
             return jsonify({"error": "Sensor no encontrado"}), 404
@@ -164,18 +203,16 @@ def eliminar_sensor_definitivo(sensor_id):
 
 @sensores_bp.route('/listar_sensores_campos', methods=['GET'])
 def listar_sensores_campos():
-    if not sensores_collection:
+    if sensores_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
         sensores = list(sensores_collection.find())
-        for sensor in sensores:
-            sensor['sensor_id'] = sensor.pop('_id')
-            sensor['sensor'] = sensor.get('nombre')
-            sensor['tipo_sensor'] = sensor.get('tipo')
-            if 'campos' in sensor:
-                for campo in sensor['campos']:
-                    campo['campo_id'] = campo.pop('_id')
-        return jsonify(sensores)
+        
+        # Convertir todos los sensores a JSON serializable
+        sensores_convertidos = [convertir_sensor_a_json(sensor) for sensor in sensores]
+        
+        return jsonify(sensores_convertidos)
+        
     except Exception as e:
         log_error(e, "listar_sensores_campos")
         return jsonify({"error": str(e)}), 500

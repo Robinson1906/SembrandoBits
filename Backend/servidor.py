@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, json
 from flask_cors import CORS
 from bson import ObjectId
 
@@ -19,17 +19,35 @@ medidas_collection = get_medidas_collection()
 db = get_db()
 client = get_client()
 
-class JSONEncoder(jsonify.encoder.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return super().default(o)
+# --- Helpers ---
+def log_error(e, contexto=""):
+    print(f"❌ ERROR {contexto}: {e}")
 
-app.json_encoder = JSONEncoder
+# Función para convertir ObjectId a string
+def convert_objectids(obj):
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    elif isinstance(obj, list):
+        return [convert_objectids(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {key: convert_objectids(value) for key, value in obj.items()}
+    return obj
+
+# Middleware para procesar respuestas JSON
+@app.after_request
+def after_request(response):
+    if response.is_json:
+        try:
+            data = response.get_json()
+            if data is not None:
+                response.set_data(json.dumps(convert_objectids(data)))
+        except:
+            pass  # Si no es JSON válido, no hacer nada
+    return response
 
 # --- Configuración de Índices y Validaciones ---
 def configurar_base_datos():
-    if not db:
+    if db is None:  # CORRECCIÓN: Usar 'is None' en lugar de 'not db'
         print("⚠️  No se puede configurar base de datos: sin conexión")
         return
         
@@ -63,7 +81,7 @@ def home():
 # --- Endpoint de prueba de conexión ---
 @app.route("/test-db")
 def test_db():
-    if client:
+    if client is not None:  # CORRECCIÓN: También aquí usar 'is not None'
         try:
             db_status = client.admin.command('serverStatus')
             return jsonify({
@@ -84,7 +102,7 @@ def test_db():
 
 # --- INICIO DEL SERVIDOR ---
 if __name__ == "__main__":
-    if client:
+    if client is not None:  # CORRECCIÓN: Usar 'is not None'
         app.run(host="0.0.0.0", port=5000, debug=True)
     else:
         print("El servidor no se puede iniciar debido a un error de conexión con la base de datos.")

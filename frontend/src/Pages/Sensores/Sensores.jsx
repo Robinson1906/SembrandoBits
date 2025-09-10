@@ -11,21 +11,36 @@ function Sensores() {
     campos: [{ nombre_campo: "", tipo_campo: "" }],
   });
   const [editando, setEditando] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const opcionesTipoCampo = ["float", "number", "entero", "boolean"];
+  const opcionesTipoCampo = ["float", "number", "int", "boolean", "string"];
+  const API_BASE_URL = "http://localhost:5000";
 
-  const cargarSensores = () => {
-    fetch("http://127.0.0.1:5000/listar_sensores_campos")
-      .then((res) => res.json())
-      .then((data) => setSensores(data))
-      .catch((err) => console.error("Error cargando sensores:", err));
+  const cargarSensores = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/listar_sensores_campos`);
+      if (!res.ok) throw new Error("Error al cargar sensores");
+      const data = await res.json();
+      setSensores(data);
+    } catch (err) {
+      console.error("Error cargando sensores:", err);
+      setError("No se pudieron cargar los sensores");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const cargarMedidas = () => {
-    fetch("http://127.0.0.1:5000/medidas")
-      .then((res) => res.json())
-      .then((data) => setMedidas(data))
-      .catch((err) => console.error("Error cargando medidas:", err));
+  const cargarMedidas = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/medidas?limite=20`);
+      if (!res.ok) throw new Error("Error al cargar medidas");
+      const data = await res.json();
+      setMedidas(data);
+    } catch (err) {
+      console.error("Error cargando medidas:", err);
+    }
   };
 
   useEffect(() => {
@@ -71,66 +86,90 @@ function Sensores() {
     setEditando({ ...editando, campos: nuevosCampos });
   };
 
-  const agregarSensor = () => {
-    fetch("http://127.0.0.1:5000/agregar_sensor", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(nuevo),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setNuevo({
-          sensor: "",
-          tipo_sensor: "",
-          activo: true,
-          campos: [{ nombre_campo: "", tipo_campo: "" }],
-        });
-        cargarSensores();
-      })
-      .catch((err) => console.error("Error agregando sensor:", err));
+  const agregarSensor = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/agregar_sensor`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevo),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Error al agregar sensor");
+      }
+
+      const data = await res.json();
+      alert(data.mensaje || "Sensor agregado correctamente");
+
+      setNuevo({
+        sensor: "",
+        tipo_sensor: "",
+        activo: true,
+        campos: [{ nombre_campo: "", tipo_campo: "" }],
+      });
+      cargarSensores();
+    } catch (err) {
+      console.error("Error agregando sensor:", err);
+      alert(err.message || "Error al agregar sensor");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const guardarEdicion = () => {
-    fetch(`http://127.0.0.1:5000/editar_sensor/${editando.sensor_id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...editando,
-        activo: Boolean(editando.activo),
-      }),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setEditando(null);
-        cargarSensores();
-      })
-      .catch((err) => console.error("Error editando sensor:", err));
+  const guardarEdicion = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/editar_sensor/${editando.sensor_id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editando),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Error al editar sensor");
+      }
+
+      const data = await res.json();
+      alert(data.mensaje || "Sensor actualizado correctamente");
+
+      setEditando(null);
+      cargarSensores();
+    } catch (err) {
+      console.error("Error editando sensor:", err);
+      alert(err.message || "Error al editar sensor");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const toggleEstadoSensor = async (sensor_id, sensor_activo, sensor_nombre) => {
     const nuevoEstado = !sensor_activo;
-    const accion = nuevoEstado ? "encender" : "apagar";
+    const accion = nuevoEstado ? "activar" : "desactivar";
     
     if (!window.confirm(`¿Seguro que deseas ${accion} el sensor "${sensor_nombre}"?`)) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/editar_sensor/${sensor_id}`, {
+      const res = await fetch(`${API_BASE_URL}/editar_sensor/${sensor_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          activo: nuevoEstado
-        }),
+        body: JSON.stringify({ activo: nuevoEstado }),
       });
 
-      if (!res.ok) throw new Error(`Error al ${accion} sensor`);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || `Error al ${accion} sensor`);
+      }
 
       const data = await res.json();
-      alert(data.mensaje || `Sensor ${accion === 'encender' ? 'encendido' : 'apagado'} correctamente`);
+      alert(data.mensaje || `Sensor ${accion}do correctamente`);
       
       cargarSensores();
     } catch (err) {
       console.error(`Error al ${accion} sensor:`, err);
-      alert(`No se pudo ${accion} el sensor. Revisa el backend.`);
+      alert(err.message || `No se pudo ${accion} el sensor`);
     }
   };
 
@@ -138,26 +177,38 @@ function Sensores() {
     if (!window.confirm(`¿ESTÁS SEGURO? Esta acción eliminará permanentemente el sensor "${sensor_nombre}" y todas sus medidas. ¡Esta acción no se puede deshacer!`)) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/eliminar_sensor_definitivo/${sensor_id}`, {
+      const res = await fetch(`${API_BASE_URL}/eliminar_sensor_definitivo/${sensor_id}`, {
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("Error eliminando sensor definitivamente");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Error eliminando sensor");
+      }
 
       const data = await res.json();
       alert(data.mensaje || "Sensor eliminado definitivamente");
       
       cargarSensores();
       cargarMedidas();
-      
     } catch (err) {
       console.error("Error eliminando sensor:", err);
-      alert("No se pudo eliminar el sensor definitivamente.");
+      alert(err.message || "No se pudo eliminar el sensor");
     }
   };
 
+  const formatearFecha = (timestamp) => {
+    if (!timestamp) return "";
+    const date = new Date(timestamp);
+    return date.toLocaleString("es-ES");
+  };
+
+  if (loading) return <div className="loading">Cargando...</div>;
+
   return (
     <div className="contenedor">
+      {error && <div className="error">{error}</div>}
+
       <h2 className="titulo">➕ Agregar Sensor</h2>
       <div className="formulario">
         <input
@@ -173,13 +224,11 @@ function Sensores() {
           onChange={(e) => setNuevo({ ...nuevo, tipo_sensor: e.target.value })}
         />
         <select
-          value={nuevo.activo ? "true" : "false"}
-          onChange={(e) =>
-            setNuevo({ ...nuevo, activo: e.target.value === "true" })
-          }
+          value={nuevo.activo}
+          onChange={(e) => setNuevo({ ...nuevo, activo: e.target.value === "true" })}
         >
-          <option value="true">Activo</option>
-          <option value="false">Inactivo</option>
+          <option value={true}>Activo</option>
+          <option value={false}>Inactivo</option>
         </select>
 
         <h4>Campos</h4>
@@ -216,164 +265,180 @@ function Sensores() {
           + Añadir Campo
         </button>
 
-        <button className="btn-guardar" onClick={agregarSensor}>
-          Guardar
+        <button className="btn-guardar" onClick={agregarSensor} disabled={loading}>
+          {loading ? "Guardando..." : "Guardar Sensor"}
         </button>
       </div>
 
-      <h2 className="titulo">📋 Lista de Sensores</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Activo</th>
-            <th>Campos</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sensores.map((s) => (
-            <tr key={s.sensor_id}>
-              <td>{s.sensor_id}</td>
-              <td>{s.sensor}</td>
-              <td>{s.tipo_sensor}</td>
-              <td className={s.activo ? "activo" : "inactivo"}>
-                {s.activo ? "Sí" : "No"}
-              </td>
-              <td>
-                <ul>
-                  {s.campos.map((c) => (
-                    <li key={c.campo_id}>
-                      {c.nombre_campo} ({c.tipo_campo})
-                    </li>
-                  ))}
-                </ul>
-              </td>
-              <td>
-                <button
-                  className="btn-editar"
-                  onClick={() => setEditando({...s})}
-                >
-                  Editar
-                </button>
-                <button
-                  className={s.activo ? "btn-apagar" : "btn-encender"}
-                  onClick={() => toggleEstadoSensor(s.sensor_id, s.activo, s.sensor)}
-                  title={s.activo ? "Apagar sensor" : "Encender sensor"}
-                >
-                  {s.activo ? "🌙 Apagar" : "💡 Encender"}
-                </button>
-                <button
-                  className="btn-eliminar-definitivo"
-                  onClick={() => eliminarSensorDefinitivamente(s.sensor_id, s.sensor)}
-                  title="Eliminar permanentemente"
-                >
-                  🗑️ Eliminar
-                </button>
-              </td>
+      <h2 className="titulo">📋 Lista de Sensores ({sensores.length})</h2>
+      <div className="tabla-contenedor">
+        <table className="tabla-sensores">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Campos</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sensores.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="no-data">No hay sensores registrados</td>
+              </tr>
+            ) : (
+              sensores.map((s) => (
+                <tr key={s.sensor_id} className={s.activo ? "activo" : "inactivo"}>
+                  <td>{s.sensor}</td>
+                  <td>{s.tipo_sensor}</td>
+                  <td>
+                    <span className={`estado ${s.activo ? "activo" : "inactivo"}`}>
+                      {s.activo ? "🟢 Activo" : "🔴 Inactivo"}
+                    </span>
+                  </td>
+                  <td>
+                    <ul className="lista-campos">
+                      {s.campos && s.campos.map((c) => (
+                        <li key={c.campo_id}>
+                          <strong>{c.nombre_campo}</strong> ({c.tipo_campo})
+                          {c.activo === false && " ❌"}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td>
+                    <div className="acciones">
+                      <button
+                        className="btn-editar"
+                        onClick={() => setEditando({...s})}
+                        title="Editar sensor"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        className={s.activo ? "btn-desactivar" : "btn-activar"}
+                        onClick={() => toggleEstadoSensor(s.sensor_id, s.activo, s.sensor)}
+                        title={s.activo ? "Desactivar sensor" : "Activar sensor"}
+                      >
+                        {s.activo ? "⏸️" : "▶️"}
+                      </button>
+                      <button
+                        className="btn-eliminar"
+                        onClick={() => eliminarSensorDefinitivamente(s.sensor_id, s.sensor)}
+                        title="Eliminar permanentemente"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {editando && (
-        <div className="panel-edicion">
-          <h3>✏️ Editar Sensor</h3>
-          <input
-            type="text"
-            value={editando.sensor}
-            onChange={(e) => setEditando({ ...editando, sensor: e.target.value })}
-          />
-          <input
-            type="text"
-            value={editando.tipo_sensor}
-            onChange={(e) =>
-              setEditando({ ...editando, tipo_sensor: e.target.value })
-            }
-          />
-          <select
-            value={editando.activo ? "true" : "false"}
-            onChange={(e) =>
-              setEditando({ ...editando, activo: e.target.value === "true" })
-            }
-          >
-            <option value="true">Activo</option>
-            <option value="false">Inactivo</option>
-          </select>
+        <div className="modal">
+          <div className="modal-contenido">
+            <h3>✏️ Editar Sensor</h3>
+            <input
+              type="text"
+              placeholder="Nombre del sensor"
+              value={editando.sensor}
+              onChange={(e) => setEditando({ ...editando, sensor: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Tipo de sensor"
+              value={editando.tipo_sensor}
+              onChange={(e) => setEditando({ ...editando, tipo_sensor: e.target.value })}
+            />
+            <select
+              value={editando.activo}
+              onChange={(e) => setEditando({ ...editando, activo: e.target.value === "true" })}
+            >
+              <option value={true}>Activo</option>
+              <option value={false}>Inactivo</option>
+            </select>
 
-          <h4>Campos</h4>
-          {editando.campos.map((campo, i) => (
-            <div key={i} className="campo-grupo">
-              <input
-                type="text"
-                placeholder="Nombre Campo"
-                value={campo.nombre_campo}
-                onChange={(e) => actualizarCampoEdicion(i, "nombre_campo", e.target.value)}
-              />
-              <select
-                value={campo.tipo_campo}
-                onChange={(e) => actualizarCampoEdicion(i, "tipo_campo", e.target.value)}
-              >
-                <option value="">Selecciona tipo</option>
-                {opcionesTipoCampo.map((tipo) => (
-                  <option key={tipo} value={tipo}>
-                    {tipo}
-                  </option>
-                ))}
-              </select>
-              {editando.campos.length > 1 && (
-                <button
-                  className="btn-eliminar-campo"
-                  onClick={() => eliminarCampoEdicion(i)}
+            <h4>Campos</h4>
+            {editando.campos && editando.campos.map((campo, i) => (
+              <div key={i} className="campo-grupo">
+                <input
+                  type="text"
+                  placeholder="Nombre Campo"
+                  value={campo.nombre_campo}
+                  onChange={(e) => actualizarCampoEdicion(i, "nombre_campo", e.target.value)}
+                />
+                <select
+                  value={campo.tipo_campo}
+                  onChange={(e) => actualizarCampoEdicion(i, "tipo_campo", e.target.value)}
                 >
-                  X
-                </button>
-              )}
-            </div>
-          ))}
-          
-          <button className="btn-agregar-campo" onClick={agregarCampoEdicion}>
-            + Añadir Campo
-          </button>
+                  <option value="">Selecciona tipo</option>
+                  {opcionesTipoCampo.map((tipo) => (
+                    <option key={tipo} value={tipo}>
+                      {tipo}
+                    </option>
+                  ))}
+                </select>
+                {editando.campos.length > 1 && (
+                  <button
+                    className="btn-eliminar-campo"
+                    onClick={() => eliminarCampoEdicion(i)}
+                  >
+                    X
+                  </button>
+                )}
+              </div>
+            ))}
+            
+            <button className="btn-agregar-campo" onClick={agregarCampoEdicion}>
+              + Añadir Campo
+            </button>
 
-          <button className="btn-guardar" onClick={guardarEdicion}>
-            Guardar Cambios
-          </button>
-          <button className="btn-cancelar" onClick={() => setEditando(null)}>
-            Cancelar
-          </button>
+            <div className="modal-acciones">
+              <button className="btn-guardar" onClick={guardarEdicion} disabled={loading}>
+                {loading ? "Guardando..." : "Guardar Cambios"}
+              </button>
+              <button className="btn-cancelar" onClick={() => setEditando(null)}>
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      <h2 className="titulo">📊 Últimas Medidas</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Sensor</th>
-            <th>Campo</th>
-            <th>Valor</th>
-            <th>Fecha</th>
-          </tr>
-        </thead>
-        <tbody>
-          {medidas.length > 0 ? (
-            medidas.map((m, i) => (
-              <tr key={i}>
-                <td>{m.sensor}</td>
-                <td>{m.nombre_campo}</td>
-                <td>{m.valor}</td>
-                <td>{m.fecha}</td>
-              </tr>
-            ))
-          ) : (
+      <h2 className="titulo">📊 Últimas Medidas ({medidas.length})</h2>
+      <div className="tabla-contenedor">
+        <table className="tabla-medidas">
+          <thead>
             <tr>
-              <td colSpan="4">No hay medidas registradas</td>
+              <th>Sensor</th>
+              <th>Campo</th>
+              <th>Valor</th>
+              <th>Fecha/Hora</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {medidas.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="no-data">No hay medidas registradas</td>
+              </tr>
+            ) : (
+              medidas.map((m, i) => (
+                <tr key={i}>
+                  <td>{m.sensor}</td>
+                  <td>{m.nombre_campo}</td>
+                  <td className="valor">{m.valor}</td>
+                  <td>{formatearFecha(m.timestamp)}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

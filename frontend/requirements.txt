@@ -1,0 +1,20 @@
+# Requisitos para el proyecto frontend React
+
+# Node.js (asegúrate de instalar la versión recomendada, por ejemplo 18.x o superior)
+# https://nodejs.org/
+
+# Dependencias del proyecto (instaladas vía npm o yarn)
+react-router-dom
+recharts
+vite
+tailwindcss
+postcss
+autoprefixer
+
+# Comandos útiles:
+# npm install          # para instalar todas las dependencias
+# npm run dev          # para iniciar el servidor de desarrollo con Vite
+# npm run build        # para construir la versión de producción
+# npm run preview      # para previsualizar la build de producción
+
+# Nota: Node.js no se instala vía npm, debe instalarse desde su página oficial.

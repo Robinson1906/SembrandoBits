@@ -130,13 +130,17 @@ table tr:hover {
   font-weight: bold;
 }
 
-/* Botones */
+/* Botones generales */
 .btn-editar,
 .btn-apagar,
 .btn-encender,
 .btn-eliminar-definitivo,
 .btn-cancelar,
-.btn-eliminar-campo {
+.btn-eliminar-campo,
+.btn-desactivar,
+.btn-activar,
+.btn-eliminar,
+.btn-guardar {
   padding: 8px 15px;
   margin: 4px;
   border: none;
@@ -145,13 +149,14 @@ table tr:hover {
   font-size: 12px;
   font-weight: bold;
   transition: all 0.3s ease;
+  min-width: 100px;
+  text-align: center;
 }
 
 .btn-editar {
   background: #2196f3;
   color: white;
 }
-
 .btn-editar:hover {
   background: #1976d2;
   transform: translateY(-2px);
@@ -161,7 +166,6 @@ table tr:hover {
   background: #ff9800;
   color: white;
 }
-
 .btn-apagar:hover {
   background: #f57c00;
   transform: translateY(-2px);
@@ -171,18 +175,18 @@ table tr:hover {
   background: #4caf50;
   color: white;
 }
-
 .btn-encender:hover {
   background: #388e3c;
   transform: translateY(-2px);
 }
 
-.btn-eliminar-definitivo {
+.btn-eliminar-definitivo,
+.btn-eliminar {
   background: #d32f2f;
   color: white;
 }
-
-.btn-eliminar-definitivo:hover {
+.btn-eliminar-definitivo:hover,
+.btn-eliminar:hover {
   background: #b71c1c;
   transform: translateY(-2px);
 }
@@ -193,7 +197,6 @@ table tr:hover {
   padding: 5px 10px;
   font-size: 12px;
 }
-
 .btn-eliminar-campo:hover {
   background: #c62828;
 }
@@ -202,9 +205,27 @@ table tr:hover {
   background: #757575;
   color: white;
 }
-
 .btn-cancelar:hover {
   background: #555;
+  transform: translateY(-2px);
+}
+
+/* Botones activar/desactivar */
+.btn-desactivar {
+  background: #ff9800;
+  color: white;
+}
+.btn-desactivar:hover {
+  background: #f57c00;
+  transform: translateY(-2px);
+}
+
+.btn-activar {
+  background: #4caf50;
+  color: white;
+}
+.btn-activar:hover {
+  background: #388e3c;
   transform: translateY(-2px);
 }
 
@@ -248,7 +269,10 @@ table td:last-child {
 table .btn-editar,
 table .btn-apagar,
 table .btn-encender,
-table .btn-eliminar-definitivo {
+table .btn-eliminar-definitivo,
+table .btn-desactivar,
+table .btn-activar,
+table .btn-eliminar {
   margin: 4px;
   padding: 6px 12px;
   font-size: 11px;
@@ -289,14 +313,18 @@ ul li {
     font-size: 12px;
   }
   
-  .btn-editar,
-  .btn-apagar,
-  .btn-encender,
-  .btn-eliminar-definitivo {
-    padding: 6px 10px;
-    font-size: 10px;
-    margin: 2px;
-  }
+/* Botones más compactos en la tabla */
+table .btn-editar,
+table .btn-apagar,
+table .btn-encender,
+table .btn-eliminar-definitivo,
+table .btn-desactivar,
+table .btn-activar,
+table .btn-eliminar {
+  min-width: 160px;   /* ✅ más angostos */
+  padding: 6px 10px; /* ✅ menos relleno */
+  font-size: 11px;   /* opcional: texto más compacto */
+}
   
   .campo-grupo {
     flex-direction: column;
@@ -317,4 +345,76 @@ ul li {
     width: 100%;
     margin: 5px 0;
   }
+}
+
+/* ===== MODAL EDITAR SENSOR ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-contenido {
+  background: #1e1e2f;
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  animation: aparecer 0.3s ease-out;
+}
+
+.modal-contenido h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #4fc3f7;
+  font-weight: bold;
+}
+
+/* Campos del modal: igual que los del formulario */
+.modal-contenido input,
+.modal-contenido select {
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #333;
+  background: #2a2a3d;
+  color: #fff;
+  font-size: 14px;
+  width: 100%;
+  display: block;
+}
+
+.modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Ajuste en tabla de acciones */
+.acciones {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
 }
