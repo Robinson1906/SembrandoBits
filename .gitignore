@@ -1,0 +1,38 @@
+# Dependencias de Node
+node_modules/
+
+# Entornos virtuales de Python
+.venv/
+venv/
+env/
+ENV/
+
+# Caches y bytecode de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Archivos de log
+*.log
+
+# Configuración/Entorno local
+.env
+.env.*
+
+# Sistemas
+*.DS_Store
+Thumbs.db
+
+# Build artefacts
+dist/
+build/
+
+# Editor
+.vscode/
+*.code-workspace
+
+# Otros
+coverage/
+.pytest_cache/
+*.sqlite3
