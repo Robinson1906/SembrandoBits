@@ -1,3 +1,5 @@
+import os
+import sys
 from flask import Flask, jsonify, json
 from flask_cors import CORS
 from bson import ObjectId
@@ -47,25 +49,21 @@ def after_request(response):
 
 # --- Configuración de Índices y Validaciones ---
 def configurar_base_datos():
-    if db is None:  # CORRECCIÓN: Usar 'is None' en lugar de 'not db'
-        print("⚠️  No se puede configurar base de datos: sin conexión")
+    if db is None:
+        print("[WARN] No se puede configurar base de datos: sin conexion")
         return
-        
     try:
-        # Índices para colección sensores
+        # Indices para coleccion sensores
         sensores_collection.create_index([("nombre", 1)], unique=True, background=True)
         sensores_collection.create_index([("activo", 1), ("tipo_sensor", 1)], background=True)
         sensores_collection.create_index([("campos.nombre_campo", 1)], background=True)
-        
-        # Índices para colección medidas
+        # Indices para coleccion medidas
         medidas_collection.create_index([("sensor_id", 1), ("campo_id", 1), ("timestamp", -1)], background=True)
         medidas_collection.create_index([("timestamp", -1)], background=True)
         medidas_collection.create_index([("sensor_id", 1), ("timestamp", 1)], background=True)
-        
-        print("✅ Índices de la base de datos creados correctamente")
-        
+        print("[OK] Indices de la base de datos creados correctamente")
     except Exception as e:
-        print(f"⚠️  Error al configurar índices: {e}. La app funcionará pero con rendimiento reducido.")
+        print(f"[WARN] Error al configurar indices: {e}. La app funcionara pero con rendimiento reducido.")
 
 # Configurar la base de datos
 configurar_base_datos()
@@ -76,7 +74,7 @@ app.register_blueprint(medidas_bp)
 
 @app.route("/")
 def home():
-    return "🌐 Servidor Flask con MongoDB Atlas 🚀"
+    return "Servidor Flask con MongoDB Atlas"
 
 # --- Endpoint de prueba de conexión ---
 @app.route("/test-db")
@@ -102,7 +100,33 @@ def test_db():
 
 # --- INICIO DEL SERVIDOR ---
 if __name__ == "__main__":
-    if client is not None:  # CORRECCIÓN: Usar 'is not None'
-        app.run(host="0.0.0.0", port=8860, debug=True)
-    else:
-        print("El servidor no se puede iniciar debido a un error de conexión con la base de datos.")
+    # Permitir override vía variables de entorno
+    bind_host = os.getenv("BIND_HOST", "0.0.0.0")
+    try:
+        port = int(os.getenv("PORT", "8860"))
+    except ValueError:
+        print("[WARN] PORT invalido en variables de entorno, usando 8860")
+        port = 8860
+
+    debug_flag = os.getenv("FLASK_DEBUG", "0") == "1"
+    allow_without_db = os.getenv("ALLOW_START_WITHOUT_DB", "1") == "1"
+
+    if client is None:
+        if allow_without_db:
+            print("[INFO] Iniciando en MODO DEGRADADO: no hay conexion con la base de datos. Endpoints de escritura/lectura devolveran error 503.")
+        else:
+            print("[ERROR] No hay conexion a la base de datos y ALLOW_START_WITHOUT_DB=0. Abortando inicio.")
+            import time; time.sleep(3)
+            raise SystemExit(1)
+
+    # Forzar UTF-8 para evitar errores de encoding al correr como servicio
+    try:
+        if hasattr(sys.stdout, 'reconfigure'):
+            sys.stdout.reconfigure(encoding='utf-8')
+        if hasattr(sys.stderr, 'reconfigure'):
+            sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
+    print(f"[INFO] Iniciando servidor en http://{bind_host}:{port} (debug={debug_flag})")
+    app.run(host=bind_host, port=port, debug=debug_flag)

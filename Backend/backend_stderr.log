@@ -1,0 +1,100 @@
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\servidor.py", line 8, in <module>
+    from database import inicializar_base_datos, get_sensores_collection, get_medidas_collection, get_db, get_client, log_error
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 125, in <module>
+    inicializar_base_datos()
+  File "C:\Users\Usuario\Documents\GitHub\SembrandoBits\Backend\database.py", line 86, in inicializar_base_datos
+    print(f"\U0001f517 Intentando conectar con: {objetivo}")
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f517' in position 0: character maps to <undefined>

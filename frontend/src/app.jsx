@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
-import Footer from "./components/Footer";
+import Footer from "./Components/Footer";
 import Home from "./Pages/home/Home";       // 👈 cambiado
 import Cultivos from "./Pages/cultivos/Cultivos";
 import TipoTierra from "./Pages/Tierras/TipoTierra";
-import Sensores from "./Pages/Sensores/sensores";
+import Sensores from "./Pages/Sensores/Sensores";
 
 
 function App() {

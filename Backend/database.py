@@ -6,6 +6,12 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 import ssl
+import time
+
+# Parámetros de reintentos configurables vía entorno
+RETRY_ATTEMPTS = int(os.getenv("DB_RETRY_ATTEMPTS", "5"))  # Número de reintentos antes de rendirse
+RETRY_DELAY = int(os.getenv("DB_RETRY_DELAY", "5"))        # Segundos entre reintentos
+ALLOW_START_WITHOUT_DB = os.getenv("ALLOW_START_WITHOUT_DB", "1") == "1"  # Permitir que el servidor arranque aunque no conecte
 
 # Cargar variables de entorno
 env_path = Path(__file__).parent.parent / '.env'
@@ -18,15 +24,13 @@ db = None
 sensores_collection = None
 medidas_collection = None
 
-def inicializar_base_datos():
+
+def _intento_conectar(uri: str):
+    """Realiza un intento de conexión normal y alternativa; retorna True si tuvo éxito."""
     global client, db, sensores_collection, medidas_collection
-    
-    print(f"🔗 Intentando conectar con: {MONGO_URI.split('@')[1].split('/')[0] if MONGO_URI else 'URI no configurada'}")
-    
     try:
-        # Configurar opciones SSL específicas
         client = MongoClient(
-            MONGO_URI,
+            uri,
             server_api=ServerApi('1'),
             tls=True,
             tlsAllowInvalidCertificates=True,
@@ -35,55 +39,71 @@ def inicializar_base_datos():
             serverSelectionTimeoutMS=30000,
             retryWrites=True
         )
-        
-        # Enviar un ping para confirmar una conexión exitosa
         client.admin.command('ping')
         print("✅ Conexión a MongoDB Atlas exitosa.")
-        
-        # Definir la base de datos y las colecciones
         db = client.iotdb
         sensores_collection = db.sensores
         medidas_collection = db.medidas
-        
         return True
-        
     except Exception as e:
-        print(f"❌ Error al conectar a MongoDB: {e}")
-        
-        # Intenta una conexión alternativa sin SSL
+        print(f"❌ Error al conectar a MongoDB (modo TLS): {e}")
+        # Intentar alternativa sin TLS
         try:
-            print("⚠️  Intentando conexión alternativa sin SSL...")
-            
-            # Extraer usuario y contraseña para reconstruir la URI
-            if MONGO_URI and "@" in MONGO_URI:
-                # mongodb+srv://usuario:password@cluster...
-                partes = MONGO_URI.split('@')
+            if uri and "@" in uri:
+                partes = uri.split('@')
                 credenciales = partes[0].replace('mongodb+srv://', '')
                 cluster_info = partes[1]
-                
-                # Construir URI alternativa
                 alt_uri = f"mongodb://{credenciales}@{cluster_info}&ssl=false"
-                print(f"🔗 URI alternativa: {alt_uri.split('@')[0]}@[...]")
-                
+                print("⚠️  Intentando conexión alternativa sin SSL...")
                 client = MongoClient(
                     alt_uri,
                     server_api=ServerApi('1'),
                     connectTimeoutMS=30000,
                     socketTimeoutMS=30000
                 )
-                
                 client.admin.command('ping')
                 print("✅ Conexión alternativa exitosa (sin SSL).")
-                
                 db = client.iotdb
                 sensores_collection = db.sensores
                 medidas_collection = db.medidas
-                
                 return True
-                
         except Exception as alt_e:
             print(f"❌ Error en conexión alternativa: {alt_e}")
-            return False
+        return False
+
+def inicializar_base_datos():
+    """Inicializa la conexión con reintentos. No aborta el proceso inmediatamente.
+    Retorna True si logró conectar, False si agotó reintentos.
+    """
+    objetivo = None
+    if MONGO_URI and "@" in MONGO_URI:
+        try:
+            objetivo = MONGO_URI.split('@')[1].split('/')[0]
+        except Exception:
+            objetivo = "(parse error)"
+    else:
+        objetivo = 'URI no configurada'
+    print(f"🔗 Intentando conectar con: {objetivo}")
+
+    if not MONGO_URI:
+        print("⚠️  MONGO_URI no definida. Saltando conexión inicial.")
+        return False
+
+    for intento in range(1, RETRY_ATTEMPTS + 1):
+        print(f"🔁 Intento {intento}/{RETRY_ATTEMPTS} de conexión...")
+        if _intento_conectar(MONGO_URI):
+            return True
+        if intento < RETRY_ATTEMPTS:
+            print(f"⏳ Esperando {RETRY_DELAY}s antes del próximo intento...")
+            time.sleep(RETRY_DELAY)
+
+    print("❌ No se logró conectar a MongoDB tras reintentos.")
+    if ALLOW_START_WITHOUT_DB:
+        print("🚧 Continuando en modo degradado (sin base de datos).")
+    else:
+        print("🛑 Saliendo porque ALLOW_START_WITHOUT_DB=0")
+        # No forzamos exit aquí para que NSSM vea un proceso 'vivo' si se maneja arriba.
+    return False
 
 def get_sensores_collection():
     return sensores_collection if sensores_collection is not None else None
