@@ -1,19 +1,21 @@
-/* Sensores.css */
+/* Sensores.css - Versión Responsive */
 .contenedor {
   padding: 20px;
   color: #fff;
   font-family: Arial, sans-serif;
-  min-height: 140vh;
+  min-height: 100vh;
   background: #121212;
 }
 
+/* Títulos */
 .titulo {
-  margin-top: 30px;
+  margin-top: 20px;
   margin-bottom: 15px;
-  font-size: 24px;
+  font-size: 1.8rem;
   color: #4fc3f7;
   text-align: center;
   font-weight: bold;
+  padding-bottom: 10px;
 }
 
 /* Formularios */
@@ -89,7 +91,7 @@
   transform: translateY(-2px);
 }
 
-/* ==== Tablas unificadas ==== */
+/* Tablas */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -283,14 +285,6 @@ button:hover {
   opacity: 0.9;
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-y: scroll;
-  background: #121212;
-}
-
 /* Listas */
 ul {
   margin: 0;
@@ -301,50 +295,6 @@ ul {
 ul li {
   padding: 2px 0;
   font-size: 12px;
-}
-
-/* Responsividad para móviles */
-@media (max-width: 768px) {
-  .contenedor {
-    padding: 10px;
-  }
-  
-  table {
-    font-size: 12px;
-  }
-  
-/* Botones más compactos en la tabla */
-table .btn-editar,
-table .btn-apagar,
-table .btn-encender,
-table .btn-eliminar-definitivo,
-table .btn-desactivar,
-table .btn-activar,
-table .btn-eliminar {
-  min-width: 160px;   /* ✅ más angostos */
-  padding: 6px 10px; /* ✅ menos relleno */
-  font-size: 11px;   /* opcional: texto más compacto */
-}
-  
-  .campo-grupo {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-  
-  .campo-grupo input,
-  .campo-grupo select {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-  
-  .formulario input,
-  .formulario select,
-  .panel-edicion input,
-  .panel-edicion select {
-    width: 100%;
-    margin: 5px 0;
-  }
 }
 
 /* ===== MODAL EDITAR SENSOR ===== */
@@ -417,4 +367,178 @@ table .btn-eliminar {
   display: flex;
   justify-content: center;
   gap: 6px;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+/* Tablets y pantallas medianas */
+@media (max-width: 1024px) {
+  .contenedor {
+    padding: 15px;
+  }
+  
+  .titulo {
+    font-size: 1.6rem;
+  }
+  
+  .formulario,
+  .panel-edicion {
+    padding: 15px;
+  }
+  
+  table th,
+  table td {
+    padding: 10px;
+  }
+  
+  .campo-grupo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .campo-grupo input,
+  .campo-grupo select {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
+
+/* Móviles y pantallas pequeñas */
+@media (max-width: 768px) {
+  .contenedor {
+    padding: 10px;
+  }
+  
+  .titulo {
+    font-size: 1.4rem;
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .formulario,
+  .panel-edicion {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+  
+  .formulario input,
+  .formulario select,
+  .panel-edicion input,
+  .panel-edicion select {
+    width: 100%;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 12px;
+    display: block;
+    overflow-x: auto;
+  }
+  
+  table th,
+  table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  /* Botones más compactos en la tabla */
+  .btn-editar,
+  .btn-apagar,
+  .btn-encender,
+  .btn-eliminar-definitivo,
+  .btn-desactivar,
+  .btn-activar,
+  .btn-eliminar {
+    min-width: 80px;
+    padding: 6px 8px;
+    font-size: 11px;
+    margin: 2px;
+  }
+  
+  .acciones {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .modal-contenido {
+    padding: 15px;
+    width: 95%;
+  }
+  
+  .modal-acciones {
+    flex-direction: column;
+  }
+  
+  .modal-acciones button {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+/* Pantallas muy pequeñas (móviles en vertical) */
+@media (max-width: 480px) {
+  .titulo {
+    font-size: 1.2rem;
+  }
+  
+  .formulario .btn-guardar,
+  .btn-agregar-campo,
+  .panel-edicion .btn-guardar,
+  .panel-edicion .btn-agregar-campo {
+    width: 100%;
+    margin: 5px 0;
+  }
+  
+  .btn-agregar-campo {
+    margin-left: 0;
+  }
+  
+  table {
+    font-size: 11px;
+  }
+  
+  table th,
+  table td {
+    padding: 6px;
+    font-size: 11px;
+  }
+  
+  /* Ocultar columnas menos importantes en móviles */
+  table td:nth-child(2),
+  table th:nth-child(2) {
+    display: none;
+  }
+  
+  .lista-campos {
+    max-height: 80px;
+    overflow-y: auto;
+  }
+}
+
+/* Estados de carga y error */
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+  color: #4fc3f7;
+}
+
+.error {
+  color: #f44336;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+}
+
+.valor {
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.estado {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
 }

@@ -89,7 +89,7 @@ function Sensores() {
   const agregarSensor = async () => {
     try {
       setLoading(true);
-  const res = await fetch(`${API_BASE_URL}/agregar_sensor`, {
+      const res = await fetch(`${API_BASE_URL}/agregar_sensor`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevo),
@@ -121,7 +121,7 @@ function Sensores() {
   const guardarEdicion = async () => {
     try {
       setLoading(true);
-  const res = await fetch(`${API_BASE_URL}/editar_sensor/${editando.sensor_id}`, {
+      const res = await fetch(`${API_BASE_URL}/editar_sensor/${editando.sensor_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editando),
@@ -152,7 +152,7 @@ function Sensores() {
     if (!window.confirm(`¿Seguro que deseas ${accion} el sensor "${sensor_nombre}"?`)) return;
 
     try {
-  const res = await fetch(`${API_BASE_URL}/editar_sensor/${sensor_id}`, {
+      const res = await fetch(`${API_BASE_URL}/editar_sensor/${sensor_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ activo: nuevoEstado }),
@@ -177,7 +177,7 @@ function Sensores() {
     if (!window.confirm(`¿ESTÁS SEGURO? Esta acción eliminará permanentemente el sensor "${sensor_nombre}" y todas sus medidas. ¡Esta acción no se puede deshacer!`)) return;
 
     try {
-  const res = await fetch(`${API_BASE_URL}/eliminar_sensor_definitivo/${sensor_id}`, {
+      const res = await fetch(`${API_BASE_URL}/eliminar_sensor_definitivo/${sensor_id}`, {
         method: "DELETE",
       });
 
@@ -211,25 +211,27 @@ function Sensores() {
 
       <h2 className="titulo">➕ Agregar Sensor</h2>
       <div className="formulario">
-        <input
-          type="text"
-          placeholder="Nombre Sensor"
-          value={nuevo.sensor}
-          onChange={(e) => setNuevo({ ...nuevo, sensor: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Tipo Sensor"
-          value={nuevo.tipo_sensor}
-          onChange={(e) => setNuevo({ ...nuevo, tipo_sensor: e.target.value })}
-        />
-        <select
-          value={nuevo.activo}
-          onChange={(e) => setNuevo({ ...nuevo, activo: e.target.value === "true" })}
-        >
-          <option value={true}>Activo</option>
-          <option value={false}>Inactivo</option>
-        </select>
+        <div className="campo-grupo">
+          <input
+            type="text"
+            placeholder="Nombre Sensor"
+            value={nuevo.sensor}
+            onChange={(e) => setNuevo({ ...nuevo, sensor: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Tipo Sensor"
+            value={nuevo.tipo_sensor}
+            onChange={(e) => setNuevo({ ...nuevo, tipo_sensor: e.target.value })}
+          />
+          <select
+            value={nuevo.activo}
+            onChange={(e) => setNuevo({ ...nuevo, activo: e.target.value === "true" })}
+          >
+            <option value={true}>Activo</option>
+            <option value={false}>Inactivo</option>
+          </select>
+        </div>
 
         <h4>Campos</h4>
         {nuevo.campos.map((campo, i) => (
@@ -261,13 +263,14 @@ function Sensores() {
             )}
           </div>
         ))}
-        <button className="btn-agregar-campo" onClick={agregarCampo}>
-          + Añadir Campo
-        </button>
-
-        <button className="btn-guardar" onClick={agregarSensor} disabled={loading}>
-          {loading ? "Guardando..." : "Guardar Sensor"}
-        </button>
+        <div className="campo-grupo">
+          <button className="btn-agregar-campo" onClick={agregarCampo}>
+            + Añadir Campo
+          </button>
+          <button className="btn-guardar" onClick={agregarSensor} disabled={loading}>
+            {loading ? "Guardando..." : "Guardar Sensor"}
+          </button>
+        </div>
       </div>
 
       <h2 className="titulo">📋 Lista de Sensores ({sensores.length})</h2>
@@ -343,25 +346,27 @@ function Sensores() {
         <div className="modal">
           <div className="modal-contenido">
             <h3>✏️ Editar Sensor</h3>
-            <input
-              type="text"
-              placeholder="Nombre del sensor"
-              value={editando.sensor}
-              onChange={(e) => setEditando({ ...editando, sensor: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Tipo de sensor"
-              value={editando.tipo_sensor}
-              onChange={(e) => setEditando({ ...editando, tipo_sensor: e.target.value })}
-            />
-            <select
-              value={editando.activo}
-              onChange={(e) => setEditando({ ...editando, activo: e.target.value === "true" })}
-            >
-              <option value={true}>Activo</option>
-              <option value={false}>Inactivo</option>
-            </select>
+            <div className="campo-grupo">
+              <input
+                type="text"
+                placeholder="Nombre del sensor"
+                value={editando.sensor}
+                onChange={(e) => setEditando({ ...editando, sensor: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Tipo de sensor"
+                value={editando.tipo_sensor}
+                onChange={(e) => setEditando({ ...editando, tipo_sensor: e.target.value })}
+              />
+              <select
+                value={editando.activo}
+                onChange={(e) => setEditando({ ...editando, activo: e.target.value === "true" })}
+              >
+                <option value={true}>Activo</option>
+                <option value={false}>Inactivo</option>
+              </select>
+            </div>
 
             <h4>Campos</h4>
             {editando.campos && editando.campos.map((campo, i) => (
@@ -394,9 +399,11 @@ function Sensores() {
               </div>
             ))}
             
-            <button className="btn-agregar-campo" onClick={agregarCampoEdicion}>
-              + Añadir Campo
-            </button>
+            <div className="campo-grupo">
+              <button className="btn-agregar-campo" onClick={agregarCampoEdicion}>
+                + Añadir Campo
+              </button>
+            </div>
 
             <div className="modal-acciones">
               <button className="btn-guardar" onClick={guardarEdicion} disabled={loading}>

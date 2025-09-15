@@ -1,0 +1,5 @@
+- [x] Update Home.jsx: Change placeholder cards to features (Cultivos, Sensores, Tierras, Bienvenida)
+- [x] Add icons and simple text to cards
+- [x] Add interactivity: click to expand/show more info
+- [x] Update stylehome.css: Style to resemble a radio interface (e.g., add a central element, button-like cards)
+- [ ] Test the home page by running the dev server
