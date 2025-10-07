@@ -47,6 +47,7 @@ def convertir_sensor_a_json(sensor):
 
 @sensores_bp.route('/agregar_sensor', methods=['POST'])
 def agregar_sensor():
+    """Agrega o actualiza un sensor con sus campos. Espera JSON con sensor, tipo_sensor, activo, campos."""
     if sensores_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
@@ -125,6 +126,7 @@ def agregar_sensor():
 
 @sensores_bp.route('/editar_sensor/<string:sensor_id>', methods=['PUT'])
 def editar_sensor(sensor_id):
+    """Edita un sensor existente por ID. Puede activar/desactivar o actualizar nombre, tipo y campos."""
     if sensores_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
@@ -187,6 +189,7 @@ def editar_sensor(sensor_id):
 
 @sensores_bp.route('/eliminar_sensor_definitivo/<string:sensor_id>', methods=['DELETE'])
 def eliminar_sensor_definitivo(sensor_id):
+    """Elimina definitivamente un sensor y todas sus medidas asociadas."""
     if sensores_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
@@ -203,6 +206,7 @@ def eliminar_sensor_definitivo(sensor_id):
 
 @sensores_bp.route('/listar_sensores_campos', methods=['GET'])
 def listar_sensores_campos():
+    """Lista todos los sensores con sus campos, convirtiendo a formato JSON serializable."""
     if sensores_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:

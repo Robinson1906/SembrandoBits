@@ -13,6 +13,7 @@ sensores_collection = get_sensores_collection()
 
 @medidas_bp.route('/guardar', methods=['POST'])
 def guardar_medidas():
+    """Guarda medidas de sensores en la base de datos. Espera un JSON con 'measures'."""
     if medidas_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
@@ -53,6 +54,7 @@ def guardar_medidas():
 
 @medidas_bp.route('/medidas', methods=['GET'])
 def obtener_medidas():
+    """Obtiene medidas filtradas por parámetros opcionales: limite, sensor_id, campo_id, desde, hasta."""
     if medidas_collection is None:
         return jsonify({"error": "Conexión a la base de datos no disponible"}), 503
     try:
@@ -115,6 +117,7 @@ def obtener_medidas():
 
 @medidas_bp.route('/estado', methods=['GET'])
 def estado_sistema():
+    """Retorna el estado del sistema: conexión, total sensores, total medidas, última medida."""
     try:
         total_sensores = sensores_collection.count_documents({}) if sensores_collection is not None else 0
         total_medidas = medidas_collection.count_documents({}) if medidas_collection is not None else 0

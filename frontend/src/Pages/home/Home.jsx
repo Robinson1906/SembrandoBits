@@ -13,7 +13,7 @@ function Home() {
   ];
 
   const fmCrops = [
-    { id: 'frijol', name: 'Frijol', icon: '🫘', frequency: "88.5" },
+    { id: 'frijol', name: 'Frijol', icon: '🥘', frequency: "88.5" },
     { id: 'tomate', name: 'Tomate', icon: '🍅', frequency: "102.3" },
     { id: 'zanahoria', name: 'Zanahoria', icon: '🥕', frequency: "107.7" }
   ];

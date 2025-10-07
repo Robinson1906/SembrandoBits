@@ -106,19 +106,24 @@ def inicializar_base_datos():
     return False
 
 def get_sensores_collection():
+    """Retorna la colección de sensores si está conectada, de lo contrario None."""
     return sensores_collection if sensores_collection is not None else None
 
 def get_medidas_collection():
+    """Retorna la colección de medidas si está conectada, de lo contrario None."""
     return medidas_collection if medidas_collection is not None else None
 
 def get_db():
+    """Retorna la base de datos si está conectada, de lo contrario None."""
     return db if db is not None else None
 
 def get_client():
+    """Retorna el cliente de MongoDB si está conectado, de lo contrario None."""
     return client if client is not None else None
 
 # Helper function para logs de error
 def log_error(e, contexto=""):
+    """Registra un error en la consola con el contexto proporcionado."""
     print(f"❌ ERROR {contexto}: {e}")
 
 # Inicializar la base de datos al importar el módulo

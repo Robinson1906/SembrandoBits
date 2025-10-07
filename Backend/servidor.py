@@ -22,11 +22,9 @@ db = get_db()
 client = get_client()
 
 # --- Helpers ---
-def log_error(e, contexto=""):
-    print(f"❌ ERROR {contexto}: {e}")
-
 # Función para convertir ObjectId a string
 def convert_objectids(obj):
+    """Convierte recursivamente ObjectId en strings para serialización JSON."""
     if isinstance(obj, ObjectId):
         return str(obj)
     elif isinstance(obj, list):
@@ -38,6 +36,7 @@ def convert_objectids(obj):
 # Middleware para procesar respuestas JSON
 @app.after_request
 def after_request(response):
+    """Middleware que convierte ObjectId en respuestas JSON a strings."""
     if response.is_json:
         try:
             data = response.get_json()
@@ -49,6 +48,7 @@ def after_request(response):
 
 # --- Configuración de Índices y Validaciones ---
 def configurar_base_datos():
+    """Configura índices en las colecciones de la base de datos para optimizar consultas."""
     if db is None:
         print("[WARN] No se puede configurar base de datos: sin conexion")
         return
@@ -74,11 +74,13 @@ app.register_blueprint(medidas_bp)
 
 @app.route("/")
 def home():
+    """Endpoint raíz del servidor que confirma que el API está funcionando."""
     return "Servidor Flask con MongoDB Atlas"
 
 # --- Endpoint de prueba de conexión ---
 @app.route("/test-db")
 def test_db():
+    """Endpoint para probar la conexión a la base de datos MongoDB."""
     if client is not None:  # CORRECCIÓN: También aquí usar 'is not None'
         try:
             db_status = client.admin.command('serverStatus')
