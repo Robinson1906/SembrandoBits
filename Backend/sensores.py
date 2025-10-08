@@ -5,6 +5,37 @@ from datetime import datetime
 # Importar desde database en lugar de servidor (EVITA CIRCULAR IMPORT)
 from database import get_sensores_collection, get_medidas_collection, log_error
 
+def validar_booleano(valor, campo_nombre="activo", valor_defecto=True):
+    """
+    Valida y convierte un valor a booleano de forma robusta.
+    
+    Args:
+        valor: Valor a validar
+        campo_nombre: Nombre del campo para mensajes de error
+        valor_defecto: Valor por defecto si el valor es None
+    
+    Returns:
+        tuple: (valor_booleano, mensaje_error)
+        Si hay error, el primer elemento es None
+    """
+    if valor is None:
+        return valor_defecto, None
+    
+    if isinstance(valor, bool):
+        return valor, None
+    elif isinstance(valor, str):
+        valor_lower = valor.lower()
+        if valor_lower in ['true', '1', 'yes', 'on']:
+            return True, None
+        elif valor_lower in ['false', '0', 'no', 'off']:
+            return False, None
+        else:
+            return None, f"El campo '{campo_nombre}' debe ser un booleano válido (true/false)"
+    elif isinstance(valor, int):
+        return bool(valor), None
+    else:
+        return None, f"El campo '{campo_nombre}' debe ser un booleano válido"
+
 sensores_bp = Blueprint('sensores', __name__)
 
 # Obtener colecciones desde database
@@ -54,11 +85,16 @@ def agregar_sensor():
         data = request.get_json()
         sensor_nombre = data.get("sensor")
         tipo_sensor = data.get("tipo_sensor")
-        activo = data.get("activo", True)
+        activo_raw = data.get("activo", True)
         campos_nuevos = data.get("campos", [])
 
         if not sensor_nombre or not tipo_sensor:
             return jsonify({"error": "Se requiere 'sensor' y 'tipo_sensor'"}), 400
+
+        # Validación robusta del campo booleano 'activo'
+        activo, error_activo = validar_booleano(activo_raw, "activo", True)
+        if error_activo:
+            return jsonify({"error": error_activo}), 400
 
         sensor_existente = sensores_collection.find_one({"nombre": sensor_nombre})
 
@@ -74,20 +110,29 @@ def agregar_sensor():
                 nombre_campo = campo.get("nombre_campo")
                 tipo_campo = campo.get("tipo_campo")
                 if not nombre_campo or not tipo_campo: continue
+                
+                # Validar el campo activo del campo anidado
+                campo_activo_raw = campo.get("activo", True)
+                campo_activo, error_campo_activo = validar_booleano(
+                    campo_activo_raw, f"activo del campo '{nombre_campo}'", True
+                )
+                if error_campo_activo:
+                    return jsonify({"error": error_campo_activo}), 400
+                
                 campo_existente = sensores_collection.find_one(
                     {"_id": sensor_id, "campos.nombre_campo": nombre_campo}
                 )
                 if campo_existente:
                     sensores_collection.update_one(
                         {"_id": sensor_id, "campos.nombre_campo": nombre_campo},
-                        {"$set": {"campos.$.tipo_campo": tipo_campo, "campos.$.activo": True}}
+                        {"$set": {"campos.$.tipo_campo": tipo_campo, "campos.$.activo": campo_activo}}
                     )
                 else:
                     nuevo_campo_doc = {
                         "_id": ObjectId(),
                         "nombre_campo": nombre_campo,
                         "tipo_campo": tipo_campo,
-                        "activo": True
+                        "activo": campo_activo
                     }
                     sensores_collection.update_one(
                         {"_id": sensor_id},
@@ -95,12 +140,23 @@ def agregar_sensor():
                     )
             mensaje = f"Sensor '{sensor_nombre}' actualizado"
         else:
-            campos_doc = [{
-                "_id": ObjectId(),
-                "nombre_campo": c.get("nombre_campo"),
-                "tipo_campo": c.get("tipo_campo"),
-                "activo": True
-            } for c in campos_nuevos if c.get("nombre_campo") and c.get("tipo_campo")]
+            campos_doc = []
+            for c in campos_nuevos:
+                if c.get("nombre_campo") and c.get("tipo_campo"):
+                    # Validar el campo activo del campo anidado
+                    campo_activo_raw = c.get("activo", True)
+                    campo_activo, error_campo_activo = validar_booleano(
+                        campo_activo_raw, f"activo del campo '{c.get('nombre_campo')}'", True
+                    )
+                    if error_campo_activo:
+                        return jsonify({"error": error_campo_activo}), 400
+                    
+                    campos_doc.append({
+                        "_id": ObjectId(),
+                        "nombre_campo": c.get("nombre_campo"),
+                        "tipo_campo": c.get("tipo_campo"),
+                        "activo": campo_activo
+                    })
 
             nuevo_sensor = {
                 "nombre": sensor_nombre,
@@ -133,7 +189,11 @@ def editar_sensor(sensor_id):
         data = request.get_json()
         obj_id = ObjectId(sensor_id)
         if 'activo' in data and len(data) == 1:
-            activo = data.get("activo")
+            activo_raw = data.get("activo")
+            activo, error_activo = validar_booleano(activo_raw, "activo")
+            if error_activo:
+                return jsonify({"error": error_activo}), 400
+            
             sensores_collection.update_one(
                 {"_id": obj_id}, 
                 {"$set": {"activo": activo, "updated_at": datetime.utcnow()}}
@@ -142,10 +202,16 @@ def editar_sensor(sensor_id):
             return jsonify({"status": "ok", "mensaje": f"Sensor {estado} correctamente"})
         sensor_nombre = data.get("sensor")
         tipo_sensor = data.get("tipo_sensor")
-        activo = data.get("activo", True)
+        activo_raw = data.get("activo", True)
         campos = data.get("campos", [])
+        
         if not sensor_nombre or not tipo_sensor:
             return jsonify({"error": "Se requiere 'sensor' y 'tipo_sensor'"}), 400
+            
+        # Validación robusta del campo booleano 'activo'
+        activo, error_activo = validar_booleano(activo_raw, "activo", True)
+        if error_activo:
+            return jsonify({"error": error_activo}), 400
         sensores_collection.update_one(
             {"_id": obj_id},
             {"$set": {
@@ -161,6 +227,15 @@ def editar_sensor(sensor_id):
             campo_id_str = campo.get("campo_id")
             if not nombre_campo or not tipo_campo:
                 continue
+                
+            # Validar el campo activo del campo anidado
+            campo_activo_raw = campo.get("activo", True)
+            campo_activo, error_campo_activo = validar_booleano(
+                campo_activo_raw, f"activo del campo '{nombre_campo}'", True
+            )
+            if error_campo_activo:
+                return jsonify({"error": error_campo_activo}), 400
+                
             if campo_id_str:
                 campo_obj_id = ObjectId(campo_id_str)
                 sensores_collection.update_one(
@@ -168,7 +243,7 @@ def editar_sensor(sensor_id):
                     {"$set": {
                         "campos.$.nombre_campo": nombre_campo, 
                         "campos.$.tipo_campo": tipo_campo, 
-                        "campos.$.activo": True
+                        "campos.$.activo": campo_activo
                     }}
                 )
             else:
@@ -176,7 +251,7 @@ def editar_sensor(sensor_id):
                     "_id": ObjectId(),
                     "nombre_campo": nombre_campo,
                     "tipo_campo": tipo_campo,
-                    "activo": True
+                    "activo": campo_activo
                 }
                 sensores_collection.update_one(
                     {"_id": obj_id},
