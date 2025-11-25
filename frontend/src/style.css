@@ -15,17 +15,21 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* elimina scroll lateral */
-  overflow-y: scroll;   /* mantiene scroll vertical solo si es necesario */
+  overflow-x: hidden;
 }
-/* Contenido central */
-#root {
-  flex: 1;
+
+/* Contenedor general de la app */
+.app-container {
+  min-height: 100vh;
   display: flex;
-  align-items: center;   
-  justify-content: center; 
-  padding: 16rem;
-  text-align: center;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* === NAVBAR === */
@@ -47,12 +51,6 @@ html, body {
   box-sizing: border-box;
 
   z-index: 1000; /* 👈 evita que se esconda detrás de otros elementos */
-}
-
-/* Ajuste para que el contenido no quede escondido debajo del navbar */
-body {
-  margin: 0;
-  padding-top: 80px; /* igual o un poco más que la altura del navbar */
 }
 
 .logo {
@@ -102,13 +100,6 @@ body {
   padding: 1rem;
   width: 100%;
 
-  position: fixed;  /* 👈 fijo en la parte baja */
-  bottom: 0;
-  left: 0;
-}
-
-/* Para que el contenido no quede tapado por el footer */
-body {
-  padding-bottom: 3rem; /* deja espacio del alto del footer */
+  margin-top: 2rem;
 }
 
